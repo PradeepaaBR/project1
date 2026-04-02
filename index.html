@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Details Form</title>
+    <style>
+        body {
+            font-family:'Times New Roman', Times, serif;
+            background: linear-gradient(135deg, #6dd5ed, #2193b0, blue);
+            padding: 30px;
+        }
+        h2 {
+            text-align: center;
+            color: #000000;
+        }
+        form {
+            max-width: 600px;
+            margin: auto;
+            background: linear-gradient(135deg, #f7fcc4, #b0f1f7, #fafa8b);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 10px 8px 20px #00000040;
+        }
+        label {
+            font-weight: bold;
+            color: #000000;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0 20px 0;
+            border: none;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        input.error, textarea.error, select.error {
+            border: 2px solid red;
+            background-color: #ffe6e6;
+        }
+        .options {
+            margin-bottom: 20px;
+            color: #181111;
+        }
+        button {
+            width: 100%;
+            background: linear-gradient(135deg, #0a1005, #7af82d, #093839);
+            color: black;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 18px;
+        }
+        .error-message {
+            color: yellow;
+        }
+    </style>
+</head>
+
+<body>
+<h2>User Details Form</h2>
+
+<!-- ✅ ADDED action + method -->
+<form id="admissionForm" action="/submit" method="POST">
+
+<div class="error-message" id="errorMsg"></div>
+
+<label>Full Name *</label>
+<input type="text" id="name" name="name">
+
+<label>Email *</label>
+<input type="email" id="email" name="email">
+
+<label>Age *</label>
+<input type="number" id="age" name="age">
+
+<label>Phone *</label>
+<input type="text" id="phone" name="phone">
+
+<label>Gender *</label>
+<select id="gender" name="gender">
+    <option value="">Select Gender</option>
+    <option value="Male">Male</option>
+    <option value="Female">Female</option>
+    <option value="Other">Other</option>
+</select>
+
+<label>Department *</label>
+<div class="options">
+    <input type="radio" name="department" value="Computer science"> Computer science
+    <input type="radio" name="department" value="Physical Education"> Physical Education
+    <input type="radio" name="department" value="Arts"> Arts
+    <input type="radio" name="department" value="Other"> Other
+</div>
+
+<label>Hobbies *</label>
+<div class="options">
+    <input type="checkbox" name="hobbies" value="Reading"> Reading
+    <input type="checkbox" name="hobbies" value="Sports"> Sports
+    <input type="checkbox" name="hobbies" value="Music"> Music
+</div>
+
+<label>Address *</label>
+<textarea id="address" name="address"></textarea>
+
+<button type="submit">Submit Form</button>
+
+</form>
+
+<script>
+const form = document.getElementById('admissionForm');
+const errorMsg = document.getElementById('errorMsg');
+
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    let errors = [];
+
+    // ✅ DEFINE VARIABLES (MAIN FIX)
+    const name = document.getElementById('name');
+    const email = document.getElementById('email');
+    const age = document.getElementById('age');
+    const phone = document.getElementById('phone');
+    const gender = document.getElementById('gender');
+    const address = document.getElementById('address');
+
+    document.querySelectorAll('input, select, textarea')
+        .forEach(el => el.classList.remove('error'));
+
+    if (name.value.trim() === '') {
+        errors.push("Name is required.");
+        name.classList.add('error');
+    }
+
+    const pattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+    if (!pattern.test(email.value.trim())) {
+        errors.push("Valid email required.");
+        email.classList.add('error');
+    }
+
+    if (age.value <= 0) {
+        errors.push("Valid age required.");
+        age.classList.add('error');
+    }
+
+    if (!/^[0-9]{10}$/.test(phone.value)) {
+        errors.push("Phone must be 10 digits.");
+        phone.classList.add('error');
+    }
+
+    if (gender.value === '') {
+        errors.push("Select gender.");
+    }
+
+    if (document.querySelectorAll('input[name="department"]:checked').length === 0) {
+        errors.push("Select department.");
+    }
+
+    if (document.querySelectorAll('input[name="hobbies"]:checked').length === 0) {
+        errors.push("Select at least one hobby.");
+    }
+
+    if (address.value.trim() === '') {
+        errors.push("Address required.");
+        address.classList.add('error');
+    }
+
+    if (errors.length > 0) {
+        errorMsg.innerHTML = errors.join('<br>');
+    } else {
+        errorMsg.innerHTML = "";
+        form.submit(); // ✅ THIS LINE SENDS DATA TO FLASK
+    }
+});
+</script>
+
+</body>
+</html>
